@@ -335,9 +335,9 @@ try:
 #                    limit = truncate(limit,2)
                     limit = ask_price
                     currQuant = currVal / limit
-                    currQuant = f.truncate(currQuant,2)
-#                    currQuant = f.minLimit(currQuant,minQuant)
-#                    currQuant = f.truncate(currQuant,8)
+#                    currQuant = f.truncate(currQuant,2)
+                    currQuant = f.minLimit(currQuant,minQuant)
+                    currQuant = f.truncate(currQuant,6)
                     trade=rs.order_buy_crypto_by_quantity(ticker,currQuant)
                     tradeinfo = f.checkTrade(trade)
                     tradeID = trade['id']
