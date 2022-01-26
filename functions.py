@@ -206,7 +206,7 @@ def tradeDecision(side, delta, tradeprice, ATL, ATH, realTime, realDelta, realrs
 #                decision = [True,limit]
 #                logging.info('1m RSI Delta > -8')
             if len(roll5rsi) > 1:
-                if (avg1rsi[-2] < avg1rsi[-3]) & (avg1rsi[-1] < avg1rsi[-2]) & (roll5rsi[-1] < roll5rsi[-2]) & (davg1Delta[-1] < 0):
+                if (avg1rsi[-2] < avg1rsi[-3]) & (avg1rsi[-1] < avg1rsi[-2]) & (roll5rsi[-1] < roll5rsi[-2]) & (avg1Delta[-1] < 0):
                     limit = ((avg1Delta[-1] + avg1Delta[-2]) / 2) + realTime[-1]
 #                    decision = [True,limit]
 #                    logging.info('1m RSI and 5m RSI and 1m Delta trending down')
