@@ -6,7 +6,7 @@ import pyotp
 import csv
 
 #setup log file
-logging.basicConfig(filename='/etc/trading/rs/logs/trading_20220126.log',format='%(asctime)s : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+logging.basicConfig(filename='./logs/trading_20220126.log',format='%(asctime)s : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
 def loginUser():
     login=rh_login()

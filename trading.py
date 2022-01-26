@@ -8,13 +8,15 @@ import importlib
 import csv
 
 #setup log file
-logging.basicConfig(filename='/etc/trading/rs/logs/trading_20220126.log',format='%(asctime)s,%(message)s', datefmt='%m/%d/%Y,%I:%M:%S %p', level=logging.INFO)
+logging.basicConfig(filename='./logs/trading_20220126.log',format='%(asctime)s,%(message)s', datefmt='%m/%d/%Y,%I:%M:%S %p', level=logging.INFO)
 
 #logging.info('
 
 f.loginUser()
 startinfo = f.accSts()
 sts = startinfo['sts']
+#logging.info('sts:')
+#logging.info(sts)
 
 delta = 0.0005
 price15s = []
@@ -137,8 +139,9 @@ except  Exception as e:
     logging.info(e)
 
 try:
+#    logging.info('inside try')
     while sts:
-
+#        logging.info('inside while')
         min1 = timeC%4
         min5 = timeC%20
         rsin = 0
@@ -332,7 +335,7 @@ try:
 #                    limit = truncate(limit,2)
                     limit = ask_price
                     currQuant = currVal / limit
-                    currQuant = int(currQuant)
+                    currQuant = f.truncate(currQuant,2)
 #                    currQuant = f.minLimit(currQuant,minQuant)
 #                    currQuant = f.truncate(currQuant,8)
                     trade=rs.order_buy_crypto_by_quantity(ticker,currQuant)

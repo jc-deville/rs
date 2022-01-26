@@ -1,3 +1,5 @@
-./config.csv
+config.csv
 ./logs/
 ./data/
+./logs/trading_20220126.log
+./data/ETHlog.csv
