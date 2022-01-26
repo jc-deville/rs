@@ -280,6 +280,7 @@ try:
 #                    'min1':min1,
 #                    'min5':min5
 #                    }
+#                logging.info('inside decision')
 
                 decision = f.tradeDecision('sell',delta,tradePrice,ATL,ATH,price15s,realDelta,realrsi,price1m,avg1Delta,avg1rsi,price5m,avg5Delta,avg5rsi,roll5m,roll5rsi,roll5Delta,macd5mroll,sma5x5,smaTrend,min1,min5)
                 logging.info('Trade Decision : ' + str(decision[0]) + ' @ limit : ' + str(decision[1]))
@@ -291,6 +292,7 @@ try:
                     logging.info('Sell ' + str(currQuant) + ' of ' + ticker + ' at $' + str(limit))
                     logging.info(trade)
                     tradeinfo = f.checkTrade(trade)
+                    currVal = float(currVal)
                     currVal = currVal + currQuant * limit
                     currVal = f.truncate(currVal,2)
                     tradeActive = False
