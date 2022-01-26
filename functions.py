@@ -196,8 +196,9 @@ def tradeDecision(side, delta, tradeprice, ATL, ATH, realTime, realDelta, realrs
 
     if side == 'sell':
 
+        logging.info('inside sell')
 
-        gainDelta = tradeprice + (0.8*(ATH - tradeprice))
+#        gainDelta = tradeprice + (0.8*(ATH - tradeprice))
 #        if (realTime[-1] < gainDelta) & (avg1Delta[-1] < 0):
 #            decision = [True,limit]
         if (len(avg1rsi) > 2):
