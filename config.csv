@@ -1,2 +1,2 @@
 user,pass,totp,runSys,updateConfig,tradeActive,accountVal,tradePrice,currQuant,ticker
-,,,True,FALSE,FALSE,20,0,0,ETH
+,,,TRUE,FALSE,FALSE,20,0,0,ETH
