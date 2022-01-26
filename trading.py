@@ -334,6 +334,8 @@ try:
 #                    limit = minLimit(limit,minPrice)
 #                    limit = truncate(limit,2)
                     limit = ask_price
+                    currVal = float(currVal)
+                    limit = float(limit)
                     currQuant = currVal / limit
 #                    currQuant = f.truncate(currQuant,2)
                     currQuant = f.minLimit(currQuant,minQuant)
