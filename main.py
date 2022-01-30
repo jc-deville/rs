@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import robin_stocks.robinhood as rs
 import math as m
 import functions as f
