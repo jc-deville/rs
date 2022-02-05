@@ -41,6 +41,7 @@ def accSts():
             tradePrice = row['tradePrice']
             currQuant = row['currQuant']
             ticker = row['ticker']
+            testing = row['test']
 
     if sts == 'True':
         sts = True
@@ -59,7 +60,8 @@ def accSts():
         'accountVal':accVal,
         'quant':currQuant,
         'tradePrice':tradePrice,
-        'ticker':ticker
+        'ticker':ticker,
+        'test':testing
         }
     return results
 
