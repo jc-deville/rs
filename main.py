@@ -8,10 +8,10 @@ import csv
 import os
 import pathlib
 import logging
-from datetime import datetime
+from datetime import datetime as dt
 import time
 
-logging.basicConfig(filename='/etc/trading/rs/data/priceLog.log',format='%(asctime)s : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+logging.basicConfig(filename='./data/priceLog.log',format='%(asctime)s : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
 startinfo = f.accSts()
 sts = startinfo['sts']
@@ -28,21 +28,24 @@ else:
         writer = csv.DictWriter(csvfile,fieldnames = pricelogHeader)
         writer.writeheader()
 
+
 f.loginUser()
 
+is_crypto = f.secType(ticker)
 
+if is_crypto:
+    market = True
+else:
+    market = f.marketopen()
 
-while sts == True:
-
-    now = datetime.now()
-    datenow = now.strftime("%m/%d/%Y")
-    timenow = now.strftime("%H:%M:%S")
-    secnow = now.strftime("%S")
-    secnow = int(secnow)
+while (sts == True) & (market == True):
 
     if secnow%5 == 0:
         try:
-            quote = rs.get_crypto_quote(ticker)
+            if is_crypto:
+                quote = rs.get_crypto_quote(ticker)
+            else:
+                quote = rs.get_quotes(ticker)
 
             writedict = {'date':datenow,'time':timenow,'ticker':ticker,'mark':quote['mark_price'],'bid':quote['bid_price'],'ask':quote['ask_price']}
 
@@ -56,6 +59,11 @@ while sts == True:
 
         except Exception as e:
             logging.info(e)
+    
+    if is_crypto:
+        market = True
+    else:
+        market = f.marketopen()
 
     time.sleep(1)
 

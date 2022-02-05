@@ -47,16 +47,22 @@ tradeTest = False
 ticker = startinfo['ticker']
 ATH = 0
 ATL = 0
+is_crypto = f.secType(ticker)
+account = rs.load_account_profile()
+accID = account['user_id']
 
 timeC = 1
 
+if is_crypto:
+    crypInfo = rs.get_crypto_info(ticker)
 
-crypInfo = rs.get_crypto_info(ticker)
-
-minPriceInc = crypInfo['min_order_price_increment']
-minPrice = float(minPriceInc)
-minQuantInc = crypInfo['min_order_quantity_increment']
-minQuant = float(minQuantInc)
+    minPriceInc = crypInfo['min_order_price_increment']
+    minPrice = float(minPriceInc)
+    minQuantInc = crypInfo['min_order_quantity_increment']
+    minQuant = float(minQuantInc)
+    market = True
+else:
+    market = f.marketopen()
 
 fpath = '/etc/trading/rs/data/' + ticker + 'log.csv'
 
@@ -141,13 +147,17 @@ except  Exception as e:
 
 try:
 #    logging.info('inside try')
-    while sts:
+    while sts & market:
 #        logging.info('inside while')
         min1 = timeC%4
         min5 = timeC%20
         rsin = 0
+        
+        if is_crypto:
+            quote = rs.get_crypto_quote(ticker)
+        else:
+            quote = rs.get_quotes(ticker)
 
-        quote = rs.get_crypto_quote(ticker)
         mark_price = float(quote['mark_price'])
         bid_price = float(quote['bid_price'])
         ask_price = float(quote['ask_price'])
@@ -287,12 +297,15 @@ try:
                 logging.info('Trade Decision : ' + str(decision[0]) + ' @ limit : ' + str(decision[1]))
                 decider = decision[0]
                 if decider:
-                    trade=rs.order_sell_crypto_by_quantity(ticker,currQuant)
+                    if is_crypto:
+                        trade=rs.order_sell_crypto_by_quantity(ticker,currQuant)
+                    else:
+                        trade=rs.order(ticker,currQuant,'sell')
                     limit = trade['price']
                     limit = float(limit)
                     logging.info('Sell ' + str(currQuant) + ' of ' + ticker + ' at $' + str(limit))
                     logging.info(trade)
-                    tradeinfo = f.checkTrade(trade)
+                    tradeinfo = f.checkTrade(trade,is_crypto)
                     currVal = float(currVal)
                     currVal = currVal + currQuant * limit
                     currVal = f.truncate(currVal,2)
@@ -343,10 +356,19 @@ try:
 #                    currQuant = f.truncate(currQuant,2)
                     currQuant = f.minLimit(currQuant,minQuant)
                     currQuant = f.truncate(currQuant,6)
-                    trade=rs.order_buy_crypto_by_quantity(ticker,currQuant)
-                    tradeinfo = f.checkTrade(trade)
+                    if is_crypto:
+                        trade=rs.order_buy_crypto_by_quantity(ticker,currQuant)
+                    else:
+                        currQuant = currVal / limit
+                        currQuant = int(currQuant)
+                        trade=rs.order(ticker,currQuant,'buy')
+                    tradeinfo = f.checkTrade(trade,is_crypto)
                     tradeID = trade['id']
-                    tradeData = rs.get_crypto_order_info(tradeID)
+                    if is_crypto:
+                        tradeData = rs.get_crypto_order_info(tradeID)
+                    else:
+                        tradeData = rs.get_stock_order_info(tradeID)
+
                     currQuant = trade['quantity']
                     currQuant = float(currQuant)
                     limit = tradeData['average_price']
@@ -376,6 +398,10 @@ try:
             timeC = 0
 
         timeC = timeC + 1
+        if is_crypto:
+            market = True
+        else:
+            market = f.marketopen()
 
 except  Exception as e:
     logging.info(e)

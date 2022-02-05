@@ -4,6 +4,7 @@ import time
 import logging
 import pyotp
 import csv
+from datetime import datetime as dt
 
 #setup log file
 logging.basicConfig(filename='./logs/trading_20220126.log',format='%(asctime)s : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
@@ -62,6 +63,33 @@ def accSts():
         }
     return results
 
+def marketopen():
+
+    dtstr=dt.now().strftime("%Y-%m-%d")
+    market=rs.get_market_hours('XNYS',dtstr)
+    mksts=market['is_open']
+    mkopen=market['opens_at']
+    mkclose=market['closes_at']
+    mkopen=mkopen.replace("T"," ").replace("Z","")
+    mkclose=mkclose.replace("T"," ").replace("Z","")
+    currtm=dt.utcnow().isoformat(sep=' ')
+    currtm=currtm[:len(currtm)-7]
+    if (currtm >= mkopen) & (currtm <= mkclose) & mksts:
+        marketopen=True
+    else:
+        marketopen=False
+
+    return marketupen
+
+def secType(ticker):
+    pairs = rs.get_currency_pairs()
+    list=[]
+    for item in pairs:
+        list.append(item['asset_currency']['code'])
+    is_crypto = ticker in list
+
+    return is_crypto
+
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return m.trunc(stepper * number) / stepper
@@ -80,18 +108,24 @@ def avgCalc(num, dig, start = 1):
     avg = sum / div
     return avg
 
-def checkTrade(trade):
+def checkTrade(trade,crypto):
     j = 1
     emptyCheck = False
     tradeID = trade['id']
-    tradeInfo = rs.get_crypto_order_info(tradeID)
+    if crypto:
+        tradeInfo = rs.get_crypto_order_info(tradeID)
+    else:
+        tradeInfo = rs.get_stock_order_info(tradeID)
     tradeState = tradeInfo['state']
     while emptyCheck == False:
         if tradeState == 'filled':
             emptyCheck = True
 #        logging.info('tradeid : ' + str(tradeID) + 'execution time: ' + str(j) + ' seconds')
         j += 1
-        tradeDate = rs.get_crypto_order_info(tradeID)
+        if crypto:
+            tradeDate = rs.get_crypto_order_info(tradeID)
+        else:
+            tradeData = rs.get_stock_order_info(tradeID)
         tradeState = tradeDate['state']
         time.sleep(1)
     return 'Trade ' + tradeID + ' executed in ' + str(j) + ' seconds'
